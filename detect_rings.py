@@ -24,10 +24,10 @@ INPUT_FILE = "transactions.csv"
 MIN_RING_SIZE = 3
 
 
-def load_transactions():
+def load_transactions(input_file=INPUT_FILE):
     """Read the CSV into a pandas DataFrame - think of this like loading
     a spreadsheet into memory as a table you can query/filter easily."""
-    df = pd.read_csv(INPUT_FILE)
+    df = pd.read_csv(input_file)
     return df
 
 
@@ -102,8 +102,14 @@ def score_cluster(cluster, df):
     """
     cluster_df = df[df["account_id"].isin(cluster)]
 
-    shared_devices = cluster_df["device_id"].value_counts()
-    shared_ips = cluster_df["ip_address"].value_counts()
+    # IMPORTANT: count UNIQUE ACCOUNTS per device/IP, not transaction rows.
+    # Each account has several transactions, so counting rows would say
+    # "24 accounts share this device" when really it's 6 accounts each
+    # with 4 transactions. groupby+nunique collapses rows down to the
+    # number of distinct accounts per device/IP - the number that
+    # actually matches len(cluster) and makes sense in the AI prompt.
+    shared_devices = cluster_df.groupby("device_id")["account_id"].nunique().sort_values(ascending=False)
+    shared_ips = cluster_df.groupby("ip_address")["account_id"].nunique().sort_values(ascending=False)
 
     timestamps = pd.to_datetime(cluster_df["timestamp"])
     time_span_minutes = (timestamps.max() - timestamps.min()).total_seconds() / 60

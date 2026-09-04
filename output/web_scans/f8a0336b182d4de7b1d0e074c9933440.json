@@ -1,0 +1,68 @@
+[
+  {
+    "accounts": [
+      "1a7f195b",
+      "28a39779",
+      "3f6c21f7",
+      "57eb89b1",
+      "707df251",
+      "812a1f9b"
+    ],
+    "size": 6,
+    "top_device": "9ae1a991-524",
+    "top_device_count": 6,
+    "top_ip": "20.211.218.153",
+    "top_ip_count": 6,
+    "time_span_minutes": 214.8,
+    "transaction_count": 24,
+    "total_amount": 31022.41,
+    "severity_score": 85,
+    "ai_explanation": "This cluster demonstrates strong indicators of coordinated fraud, as all 6 accounts operate from a single device and share a single IP address. Within a brief time span of 214.8 minutes, the accounts conducted 24 transactions totaling 31,022.41, resulting in a high severity score of 85.",
+    "ai_confidence": "high",
+    "ai_recommended_action": "block_and_investigate"
+  },
+  {
+    "accounts": [
+      "1a5165ca",
+      "2c6a6e9a",
+      "76c5a0dc",
+      "a53bc024",
+      "c257cf73",
+      "f387e1bd"
+    ],
+    "size": 6,
+    "top_device": "e7ea8d5a-31a",
+    "top_device_count": 6,
+    "top_ip": "187.60.53.129",
+    "top_ip_count": 6,
+    "time_span_minutes": 2.2,
+    "transaction_count": 24,
+    "total_amount": 30436.84,
+    "severity_score": 100,
+    "ai_explanation": "This cluster exhibits high risk as all 6 accounts share a single device and a single IP address. Across a very brief time span of 2.2 minutes, these accounts executed 24 transactions totaling $30,436.84. The combination of identical device/network identifiers, high transaction velocity, and a maximum severity score of 100 strongly indicates a coordinated fraud ring.",
+    "ai_confidence": "high",
+    "ai_recommended_action": "block_and_investigate"
+  },
+  {
+    "accounts": [
+      "09a0a0f6",
+      "0e614bcd",
+      "780b3657",
+      "925817b7",
+      "f4488385",
+      "fa34d2e8"
+    ],
+    "size": 6,
+    "top_device": "9458054e-c28",
+    "top_device_count": 6,
+    "top_ip": "160.168.7.110",
+    "top_ip_count": 1,
+    "time_span_minutes": 2.8,
+    "transaction_count": 24,
+    "total_amount": 29801.82,
+    "severity_score": 70,
+    "ai_explanation": "This cluster demonstrates high fraud risk as all 6 accounts share a single device to execute 24 transactions totaling $29,801.82 within an extremely short time span of 2.8 minutes. The high velocity of transactions across multiple accounts on one device suggests coordinated or automated activity, despite only 1 account sharing an IP address. With a rule-based severity score of 70, this rapid high-value activity points to an active fraud ring.",
+    "ai_confidence": "high",
+    "ai_recommended_action": "block_and_investigate"
+  }
+]

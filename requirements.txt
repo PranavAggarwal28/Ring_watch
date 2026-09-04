@@ -2,4 +2,6 @@ faker
 pandas
 networkx
 pyvis
-anthropic
+google-genai
+python-dotenv
+Flask

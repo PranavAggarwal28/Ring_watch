@@ -1,0 +1,258 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #111111;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 600px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#3498db", "font": {"color": "white"}, "id": "a18ff6b6", "label": "a18ff6b6", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "ab9099a4", "label": "ab9099a4", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f8b38a8b", "label": "f8b38a8b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "fd72b050", "label": "fd72b050", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "6601ddd0", "label": "6601ddd0", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "cd2372c2", "label": "cd2372c2", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "e45b712e", "label": "e45b712e", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "6651529e", "label": "6651529e", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "c012a0ff", "label": "c012a0ff", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "812a1f9b", "label": "812a1f9b", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "1064005c", "label": "1064005c", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "07a0ca6e", "label": "07a0ca6e", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "533420e6", "label": "533420e6", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "d248a9a7", "label": "d248a9a7", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "58007c02", "label": "58007c02", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "b2b9437a", "label": "b2b9437a", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "379efc6e", "label": "379efc6e", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "bdd640fb", "label": "bdd640fb", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "19597b5a", "label": "19597b5a", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "b0b862ef", "label": "b0b862ef", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "9e11d2cd", "label": "9e11d2cd", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "c4b032cc", "label": "c4b032cc", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "03edd1f8", "label": "03edd1f8", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "0d366dfc", "label": "0d366dfc", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "a53bc024", "label": "a53bc024", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "11ce5dd2", "label": "11ce5dd2", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "284c03d2", "label": "284c03d2", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f4e559e5", "label": "f4e559e5", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "a021c0ca", "label": "a021c0ca", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "09a0a0f6", "label": "09a0a0f6", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "d2e82f38", "label": "d2e82f38", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "dd2467ac", "label": "dd2467ac", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f6f7f0cc", "label": "f6f7f0cc", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "702cdd20", "label": "702cdd20", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "1a85910d", "label": "1a85910d", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "96fc734d", "label": "96fc734d", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "bdf66ba5", "label": "bdf66ba5", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "e8dd5e5a", "label": "e8dd5e5a", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "57eb89b1", "label": "57eb89b1", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "3cb98350", "label": "3cb98350", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "56666f9f", "label": "56666f9f", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "9b69554d", "label": "9b69554d", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "c257cf73", "label": "c257cf73", "shape": "dot", "size": 20}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "0e614bcd", "label": "0e614bcd", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "0d6a05b3", "label": "0d6a05b3", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "5275eb94", "label": "5275eb94", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "ecab3301", "label": "ecab3301", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "deef580f", "label": "deef580f", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "3e5a87e3", "label": "3e5a87e3", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "89e06ab3", "label": "89e06ab3", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "9e50aa42", "label": "9e50aa42", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "d450281c", "label": "d450281c", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "c07a30f2", "label": "c07a30f2", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "56ea57b3", "label": "56ea57b3", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "48603b32", "label": "48603b32", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "d8e88ebb", "label": "d8e88ebb", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "81fb18b3", "label": "81fb18b3", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "3f6c21f7", "label": "3f6c21f7", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "da587e8a", "label": "da587e8a", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "0986bbeb", "label": "0986bbeb", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "cbc84759", "label": "cbc84759", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "91b78d8e", "label": "91b78d8e", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "a5d04d53", "label": "a5d04d53", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "4140752c", "label": "4140752c", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "9b49bd26", "label": "9b49bd26", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "1ff49b78", "label": "1ff49b78", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "3810ae66", "label": "3810ae66", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "1f15c7b6", "label": "1f15c7b6", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "78660765", "label": "78660765", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "1c8eaee9", "label": "1c8eaee9", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f1b64afe", "label": "f1b64afe", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "20ac3703", "label": "20ac3703", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "21bddb41", "label": "21bddb41", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "7b3a4e3e", "label": "7b3a4e3e", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "c40db9b4", "label": "c40db9b4", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "4169b9fc", "label": "4169b9fc", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "17dded81", "label": "17dded81", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "e0c53cb8", "label": "e0c53cb8", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8b621d41", "label": "8b621d41", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "b380c73a", "label": "b380c73a", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "1a7f195b", "label": "1a7f195b", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "aba4fc03", "label": "aba4fc03", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "17d2582e", "label": "17d2582e", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "95863a76", "label": "95863a76", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "9716108e", "label": "9716108e", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "f387e1bd", "label": "f387e1bd", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "1b19d8b8", "label": "1b19d8b8", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "3602f8ac", "label": "3602f8ac", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "f4488385", "label": "f4488385", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "8bcf53a1", "label": "8bcf53a1", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "c4536f1d", "label": "c4536f1d", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "6ba25efe", "label": "6ba25efe", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "859131d2", "label": "859131d2", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f2e9702d", "label": "f2e9702d", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "236c7b87", "label": "236c7b87", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f2f25eef", "label": "f2f25eef", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "2c6a6e9a", "label": "2c6a6e9a", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "aca2b148", "label": "aca2b148", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8da0365b", "label": "8da0365b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "29d4beef", "label": "29d4beef", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "30a900ad", "label": "30a900ad", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "76c5a0dc", "label": "76c5a0dc", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "3e6dd58b", "label": "3e6dd58b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "37bb3eec", "label": "37bb3eec", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "67f48ad5", "label": "67f48ad5", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "c04a96c4", "label": "c04a96c4", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "4ca415ea", "label": "4ca415ea", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8a63f881", "label": "8a63f881", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "00af5b3a", "label": "00af5b3a", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "7f2984f5", "label": "7f2984f5", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f6802cdb", "label": "f6802cdb", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "764414fd", "label": "764414fd", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "43e458fc", "label": "43e458fc", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "ab73295b", "label": "ab73295b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "78b2b549", "label": "78b2b549", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "638c254c", "label": "638c254c", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f8c88fae", "label": "f8c88fae", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f53d4330", "label": "f53d4330", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "5a0cdd7c", "label": "5a0cdd7c", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "a79ac9aa", "label": "a79ac9aa", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "7a0ecfea", "label": "7a0ecfea", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "c7b5b2bc", "label": "c7b5b2bc", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "2369b584", "label": "2369b584", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "a881bfd3", "label": "a881bfd3", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "e27a984d", "label": "e27a984d", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "fc04a168", "label": "fc04a168", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8beddb12", "label": "8beddb12", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "cada4f80", "label": "cada4f80", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "9f0fda8d", "label": "9f0fda8d", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "a9597663", "label": "a9597663", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "5ebbcca5", "label": "5ebbcca5", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "22bd3388", "label": "22bd3388", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "90164161", "label": "90164161", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "3e83b91f", "label": "3e83b91f", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "44007d5a", "label": "44007d5a", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "87d292a6", "label": "87d292a6", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "88575117", "label": "88575117", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "707df251", "label": "707df251", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "fec21bbe", "label": "fec21bbe", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "2dbc2134", "label": "2dbc2134", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "fa34d2e8", "label": "fa34d2e8", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "04fc6d82", "label": "04fc6d82", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "d4578ad9", "label": "d4578ad9", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "cac5b68c", "label": "cac5b68c", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8d3aed99", "label": "8d3aed99", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "434308bc", "label": "434308bc", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "295b4715", "label": "295b4715", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "fa745761", "label": "fa745761", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "56dc8907", "label": "56dc8907", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "98543881", "label": "98543881", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "18c26797", "label": "18c26797", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8b8148f6", "label": "8b8148f6", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "4882d73c", "label": "4882d73c", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "a0a11839", "label": "a0a11839", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "5913f9d3", "label": "5913f9d3", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "7bf47042", "label": "7bf47042", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "faf14ff0", "label": "faf14ff0", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "bb2488a3", "label": "bb2488a3", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "ea83bf00", "label": "ea83bf00", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "4104a8b5", "label": "4104a8b5", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "cbceabde", "label": "cbceabde", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "76f2dbfe", "label": "76f2dbfe", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "31b1b099", "label": "31b1b099", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "925817b7", "label": "925817b7", "shape": "dot", "size": 20}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "780b3657", "label": "780b3657", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "b386f7a4", "label": "b386f7a4", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "bf0d073d", "label": "bf0d073d", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "fbe33b24", "label": "fbe33b24", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "5cae9610", "label": "5cae9610", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "d9acd158", "label": "d9acd158", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "54b4a482", "label": "54b4a482", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "3b048a8b", "label": "3b048a8b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "9e8fc965", "label": "9e8fc965", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "e0b15aba", "label": "e0b15aba", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "45b1ed25", "label": "45b1ed25", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "ddf275eb", "label": "ddf275eb", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8181a8cc", "label": "8181a8cc", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "709b7d97", "label": "709b7d97", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "01902620", "label": "01902620", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "5283aac7", "label": "5283aac7", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "6efb63b1", "label": "6efb63b1", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "0df56ac6", "label": "0df56ac6", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "680bac63", "label": "680bac63", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "32c5bd89", "label": "32c5bd89", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "1a5165ca", "label": "1a5165ca", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "ba81edd9", "label": "ba81edd9", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "31c681ec", "label": "31c681ec", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "75d66ed4", "label": "75d66ed4", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "0b2c782a", "label": "0b2c782a", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "dea45c19", "label": "dea45c19", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "ceb81f9d", "label": "ceb81f9d", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "7a4c75d4", "label": "7a4c75d4", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "be0f051b", "label": "be0f051b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "e4855aa1", "label": "e4855aa1", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "f81dbaa1", "label": "f81dbaa1", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "5e84f058", "label": "5e84f058", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "42deffcc", "label": "42deffcc", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "d86a6460", "label": "d86a6460", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "19db3ad0", "label": "19db3ad0", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8eac0a33", "label": "8eac0a33", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "de9e3757", "label": "de9e3757", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "92f5df7b", "label": "92f5df7b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "e746ccb9", "label": "e746ccb9", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "56c438e4", "label": "56c438e4", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "250a4578", "label": "250a4578", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8d605936", "label": "8d605936", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "7ed70ed7", "label": "7ed70ed7", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "474ebc19", "label": "474ebc19", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "c7fee39f", "label": "c7fee39f", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "7337c599", "label": "7337c599", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "81d2c7de", "label": "81d2c7de", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "dd56cc94", "label": "dd56cc94", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "bfbf397b", "label": "bfbf397b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "474a493b", "label": "474a493b", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "409d3602", "label": "409d3602", "shape": "dot", "size": 10}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "28a39779", "label": "28a39779", "shape": "dot", "size": 20}, {"color": "#3498db", "font": {"color": "white"}, "id": "67884209", "label": "67884209", "shape": "dot", "size": 10}, {"color": "#3498db", "font": {"color": "white"}, "id": "8f9b72ae", "label": "8f9b72ae", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"from": "812a1f9b", "to": "1a7f195b"}, {"from": "812a1f9b", "to": "28a39779"}, {"from": "812a1f9b", "to": "3f6c21f7"}, {"from": "812a1f9b", "to": "57eb89b1"}, {"from": "812a1f9b", "to": "707df251"}, {"from": "a53bc024", "to": "76c5a0dc"}, {"from": "a53bc024", "to": "c257cf73"}, {"from": "a53bc024", "to": "2c6a6e9a"}, {"from": "a53bc024", "to": "f387e1bd"}, {"from": "a53bc024", "to": "1a5165ca"}, {"from": "09a0a0f6", "to": "0e614bcd"}, {"from": "09a0a0f6", "to": "780b3657"}, {"from": "09a0a0f6", "to": "f4488385"}, {"from": "09a0a0f6", "to": "fa34d2e8"}, {"from": "09a0a0f6", "to": "925817b7"}, {"from": "57eb89b1", "to": "1a7f195b"}, {"from": "57eb89b1", "to": "28a39779"}, {"from": "57eb89b1", "to": "3f6c21f7"}, {"from": "57eb89b1", "to": "707df251"}, {"from": "c257cf73", "to": "76c5a0dc"}, {"from": "c257cf73", "to": "2c6a6e9a"}, {"from": "c257cf73", "to": "f387e1bd"}, {"from": "c257cf73", "to": "1a5165ca"}, {"from": "0e614bcd", "to": "780b3657"}, {"from": "0e614bcd", "to": "f4488385"}, {"from": "0e614bcd", "to": "fa34d2e8"}, {"from": "0e614bcd", "to": "925817b7"}, {"from": "3f6c21f7", "to": "1a7f195b"}, {"from": "3f6c21f7", "to": "28a39779"}, {"from": "3f6c21f7", "to": "707df251"}, {"from": "1a7f195b", "to": "28a39779"}, {"from": "1a7f195b", "to": "707df251"}, {"from": "f387e1bd", "to": "76c5a0dc"}, {"from": "f387e1bd", "to": "2c6a6e9a"}, {"from": "f387e1bd", "to": "1a5165ca"}, {"from": "f4488385", "to": "780b3657"}, {"from": "f4488385", "to": "fa34d2e8"}, {"from": "f4488385", "to": "925817b7"}, {"from": "2c6a6e9a", "to": "76c5a0dc"}, {"from": "2c6a6e9a", "to": "1a5165ca"}, {"from": "76c5a0dc", "to": "1a5165ca"}, {"from": "707df251", "to": "28a39779"}, {"from": "fa34d2e8", "to": "780b3657"}, {"from": "fa34d2e8", "to": "925817b7"}, {"from": "925817b7", "to": "780b3657"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

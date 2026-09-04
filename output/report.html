@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RingWatch - Fraud Ring Detection Report</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #1a1a1a; color: #eee; margin: 0; padding: 20px 40px; }
+    h1 { color: #fff; }
+    .subtitle { color: #aaa; margin-top: -10px; }
+    .card { background: #242424; border-radius: 8px; padding: 20px; margin: 20px 0; }
+    .meta { color: #999; font-size: 14px; }
+    .confidence { font-weight: bold; }
+    .explanation { line-height: 1.5; }
+    code { color: #7ec8e3; word-break: break-all; }
+    iframe { border: none; border-radius: 8px; margin-top: 20px; }
+</style>
+</head>
+<body>
+    <h1>RingWatch</h1>
+    <p class="subtitle">Fraud ring detection &mdash; 3 suspicious cluster(s) found</p>
+
+    <h2>Account Network</h2>
+    <p class="meta">Red nodes are flagged accounts. Drag to explore, scroll to zoom.</p>
+    <iframe src="graph.html" width="100%" height="620px"></iframe>
+
+    <h2>Flagged Rings</h2>
+    
+        <div class="card" style="border-left: 6px solid #f39c12;">
+            <h2>Cluster 1 &mdash; Severity 85/100</h2>
+            <p class="meta">
+                6 accounts &bull;
+                24 transactions &bull;
+                &#8377;31,022.41 total &bull;
+                214.8 min activity window
+            </p>
+            <p class="confidence" style="color: #f39c12;">
+                Confidence: HIGH &mdash;
+                Recommended action: BLOCK AND INVESTIGATE
+            </p>
+            <p class="explanation">This cluster exhibits strong indicators of a coordinated fraud ring because all 6 accounts share a single device and a single IP address. Within a span of 214.8 minutes, these accounts conducted 24 transactions totaling 31022.41. This high concentration of shared infrastructure and rapid activity accounts for the high rule-based severity score of 85.</p>
+            <details>
+                <summary>Flagged account IDs</summary>
+                <code>1a7f195b, 28a39779, 3f6c21f7, 57eb89b1, 707df251, 812a1f9b</code>
+            </details>
+        </div>
+        
+        <div class="card" style="border-left: 6px solid #e74c3c;">
+            <h2>Cluster 2 &mdash; Severity 100/100</h2>
+            <p class="meta">
+                6 accounts &bull;
+                24 transactions &bull;
+                &#8377;30,436.84 total &bull;
+                2.2 min activity window
+            </p>
+            <p class="confidence" style="color: #e74c3c;">
+                Confidence: HIGH &mdash;
+                Recommended action: BLOCK AND INVESTIGATE
+            </p>
+            <p class="explanation">This cluster exhibits critical risk indicators, as all 6 accounts share a single device and a single IP address. Within a rapid time span of just 2.2 minutes, these accounts executed 24 transactions totaling $30,436.84. The complete overlap in device and network identifiers combined with extreme transaction velocity indicates coordinated fraud ring activity.</p>
+            <details>
+                <summary>Flagged account IDs</summary>
+                <code>1a5165ca, 2c6a6e9a, 76c5a0dc, a53bc024, c257cf73, f387e1bd</code>
+            </details>
+        </div>
+        
+        <div class="card" style="border-left: 6px solid #f39c12;">
+            <h2>Cluster 3 &mdash; Severity 70/100</h2>
+            <p class="meta">
+                6 accounts &bull;
+                24 transactions &bull;
+                &#8377;29,801.82 total &bull;
+                2.8 min activity window
+            </p>
+            <p class="confidence" style="color: #f39c12;">
+                Confidence: HIGH &mdash;
+                Recommended action: BLOCK AND INVESTIGATE
+            </p>
+            <p class="explanation">All 6 accounts in this cluster shared a single device to execute 24 transactions totaling $29,801.82. This high-volume activity occurred within an extremely brief time span of 2.8 minutes, resulting in a rule-based severity score of 70 despite only 1 account sharing an IP address. The total device overlap combined with rapid transaction velocity strongly suggests a single actor operating a coordinated fraud ring.</p>
+            <details>
+                <summary>Flagged account IDs</summary>
+                <code>09a0a0f6, 0e614bcd, 780b3657, 925817b7, f4488385, fa34d2e8</code>
+            </details>
+        </div>
+        
+</body>
+</html>

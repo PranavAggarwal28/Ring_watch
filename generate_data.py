@@ -32,9 +32,20 @@ Faker.seed(42)
 # STEP 1: Config - change these numbers to make more/less data
 # ---------------------------------------------------------------------------
 NUM_NORMAL_ACCOUNTS = 200      # innocent, unrelated accounts (background noise)
-NUM_RINGS = 3                  # how many fraud rings to plant
 RING_SIZE = 6                  # how many accounts per ring
 TRANSACTIONS_PER_ACCOUNT = 4   # how many transactions each account makes
+
+# Instead of NUM_RINGS being identical copies, we now define a MIX of ring
+# "types" with different levels of obviousness - real fraud rings vary in
+# sloppiness, and your severity score should reflect that variety instead
+# of always maxing out at 100.
+#
+#   "obvious"        -> shares device AND ip, tight burst (<1 hr)   -> ~100
+#   "device_only"     -> shares device, but DIFFERENT ips per account,
+#                        spread over a day                          -> ~55
+#   "slow_burn"       -> shares device AND ip, but spread over
+#                        several hours instead of minutes            -> ~70
+RING_TYPES = ["obvious", "device_only", "slow_burn"]
 
 OUTPUT_FILE = "transactions.csv"
 
@@ -59,46 +70,68 @@ def make_normal_account():
     }
 
 
-def make_fraud_ring(ring_index, size):
+def make_fraud_ring(ring_index, size, ring_type):
     """
-    Creates a group of accounts that all SHARE the same device_id and/or
-    ip_address. This is the "tell" our detection script will look for later -
-    real independent users almost never share a device or IP with 5 other
-    "different" people.
+    Creates a group of accounts with a "tell" connecting them - but HOW
+    obvious that tell is depends on ring_type. This mirrors real fraud:
+    some rings are lazy/obvious, others are more careful and only leak
+    one signal instead of three.
     """
     shared_device = fake.uuid4()[:12]
     shared_ip = fake.ipv4()
-    fake_accounts = []
+    accounts = []
+
     for _ in range(size):
-        fake_accounts.append({
+        if ring_type == "device_only":
+            # Careful ring: shares a device (e.g. same physical phone
+            # used to register accounts) but each account connects from
+            # a DIFFERENT ip (e.g. different home wifi/mobile data) -
+            # only one signal leaks instead of two.
+            account_ip = fake.ipv4()
+        else:
+            # "obvious" and "slow_burn" rings share both device and ip.
+            account_ip = shared_ip
+
+        accounts.append({
             "account_id": fake.uuid4()[:8],
-            "device_id": shared_device,   # <- SAME for every account in this ring
-            "ip_address": shared_ip,      # <- SAME for every account in this ring
-            "ring_label": f"ring_{ring_index}",  # not real data - just so
-                                                   # WE (the developers) know
-                                                   # the answer key for testing
+            "device_id": shared_device,
+            "ip_address": account_ip,
+            "ring_label": f"ring_{ring_index}_{ring_type}",  # answer key only
+            "ring_type": ring_type,
         })
-    return fake_accounts
+    return accounts
 
 
-def make_transactions_for_account(account):
+def make_transactions_for_account(account, ring_burst_start=None):
     """
     Given one account, generate a handful of transactions for it.
     Ring accounts get transactions clustered close together in time
     (that's the "coordinated burst" signal) and normal accounts get
     naturally spread-out random timestamps.
+
+    ring_burst_start: for ring accounts, this is passed in from OUTSIDE
+    (shared by the whole ring) rather than picked fresh per account -
+    otherwise each ring member gets its own random window and the ring's
+    overall time span balloons to weeks instead of minutes.
+
+    The WIDTH of that burst window depends on ring_type:
+    "obvious"/"device_only" rings burst within ~3 minutes (bot-like);
+    "slow_burn" rings spread activity across several hours, still
+    coordinated but not tight enough to trip the "under 60 min" rule -
+    that's what makes them score lower and harder to catch.
     """
     transactions = []
     is_ring = "ring_label" in account
+    ring_type = account.get("ring_type")
+    burst_start = ring_burst_start
 
-    if is_ring:
-        # pick one "burst window" - all this ring's transactions happen
-        # close together, like a bot script firing them off quickly
-        burst_start = random_timestamp()
     for i in range(TRANSACTIONS_PER_ACCOUNT):
         if is_ring:
-            # transactions seconds/minutes apart - suspiciously fast
-            ts = burst_start + timedelta(seconds=random.randint(1, 180))
+            if ring_type == "slow_burn":
+                # spread across ~4 hours instead of ~3 minutes
+                ts = burst_start + timedelta(seconds=random.randint(1, 4 * 60 * 60))
+            else:
+                ts = burst_start + timedelta(seconds=random.randint(1, 180))
             amount = round(random.uniform(500, 2000), 2)  # similar amounts
         else:
             ts = random_timestamp()
@@ -125,14 +158,19 @@ def main():
     for _ in range(NUM_NORMAL_ACCOUNTS):
         all_accounts.append(make_normal_account())
 
-    # Build fraud ring accounts
-    for i in range(NUM_RINGS):
-        all_accounts.extend(make_fraud_ring(i, RING_SIZE))
+    # Build one fraud ring PER TYPE (obvious, device_only, slow_burn),
+    # each remembering its own shared burst-start time.
+    ring_burst_starts = {}
+    for i, ring_type in enumerate(RING_TYPES):
+        ring_accounts = make_fraud_ring(i, RING_SIZE, ring_type)
+        all_accounts.extend(ring_accounts)
+        ring_burst_starts[f"ring_{i}_{ring_type}"] = random_timestamp()
 
     # Turn every account into a handful of transactions
     all_transactions = []
     for account in all_accounts:
-        all_transactions.extend(make_transactions_for_account(account))
+        burst_start = ring_burst_starts.get(account.get("ring_label"))
+        all_transactions.extend(make_transactions_for_account(account, burst_start))
 
     # Shuffle so rings aren't sitting neatly together in the file -
     # your detection script has to actually find them, not just read
@@ -149,8 +187,8 @@ def main():
         writer.writerows(all_transactions)
 
     print(f"Generated {len(all_transactions)} transactions "
-          f"({len(all_accounts)} accounts, {NUM_RINGS} planted rings) "
-          f"-> {OUTPUT_FILE}")
+          f"({len(all_accounts)} accounts, {len(RING_TYPES)} planted rings "
+          f"of types {RING_TYPES}) -> {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
