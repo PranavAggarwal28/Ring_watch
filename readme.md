@@ -1,9 +1,9 @@
 # RingWatch — Transaction Risk Intelligence
 
-RingWatch is a local fraud-ring detection demo built for the Razorpay
-Buildathon. It detects groups of accounts connected through shared devices or
-IP addresses, assigns each group a transparent rule-based severity score, and
-uses Gemini to translate the evidence into an analyst-friendly explanation.
+RingWatch is a local fraud-ring detection application. It detects groups of
+accounts connected through shared devices or IP addresses, assigns each group a
+transparent rule-based severity score, and uses Gemini to translate the
+evidence into an analyst-friendly explanation.
 
 > Detection decides **what** is suspicious. Gemini explains **why** it was
 > flagged. Gemini does not decide the severity score.
@@ -12,7 +12,7 @@ uses Gemini to translate the evidence into an analyst-friendly explanation.
 
 ## Features
 
-- Local Razorpay-inspired employee login and risk dashboard
+- Local RingWatch login and risk dashboard
 - CSV selection, validation, upload, and scan progress experience
 - Graph-based detection of connected suspicious account clusters
 - Deterministic severity scoring from 0 to 100
@@ -130,8 +130,8 @@ Open [http://127.0.0.1:5000](http://127.0.0.1:5000).
 Demo login:
 
 ```text
-Email:    employee@razorpay.com
-Password: razorpay123
+Email:    demo@ringwatch.com
+Password: ringwatch123
 ```
 
 ### Demo flow
@@ -218,7 +218,7 @@ applies that cached explanation to a different uploaded cluster.
 
 ## Limitations
 
-- The bundled data is synthetic and should not be treated as real Razorpay data.
+- The bundled data is synthetic and should not be treated as real payment data.
 - Detection currently uses only shared device and IP relationships.
 - Scores are rule-based rather than trained from production fraud labels.
 - The demo login is local-only and is not production authentication.

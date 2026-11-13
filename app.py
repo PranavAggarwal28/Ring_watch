@@ -1,4 +1,4 @@
-"""Local Razorpay Buildathon demo UI for the existing RingWatch pipeline."""
+"""Local web interface for the RingWatch fraud-risk pipeline."""
 from pathlib import Path
 from uuid import uuid4
 import os
@@ -13,8 +13,8 @@ BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_DIR = BASE_DIR / "uploads"
 OUTPUT_DIR = BASE_DIR / "output" / "web_scans"
 REQUIRED_COLUMNS = {"account_id", "device_id", "ip_address", "amount", "timestamp"}
-DEMO_EMAIL = "employee@razorpay.com"
-DEMO_PASSWORD = "razorpay123"
+DEMO_EMAIL = "demo@ringwatch.com"
+DEMO_PASSWORD = "ringwatch123"
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "ringwatch-demo-session-key")
@@ -38,7 +38,7 @@ def login():
             session.clear()
             session["employee"] = DEMO_EMAIL
             return jsonify({"ok": True, "redirect": url_for("dashboard")})
-        return jsonify({"ok": False, "error": "Use the provided Razorpay employee demo credentials."}), 401
+        return jsonify({"ok": False, "error": "Use the RingWatch demo credentials shown on the login page."}), 401
     if logged_in():
         return redirect(url_for("dashboard"))
     return render_template("login.html")
